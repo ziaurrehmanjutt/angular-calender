@@ -1,0 +1,75 @@
+<app-header>
+
+
+  <mat-slide-toggle (change)="toggleView($event.checked)">
+    {{ isDailyView ? 'Switch to Monthly View' : 'Switch to Daily View' }}
+  </mat-slide-toggle>
+
+  <mat-card>
+    <mat-card-header>
+      <mat-toolbar>
+        <button mat-icon-button (click)="prevMonth()">
+          <mat-icon>arrow_left</mat-icon>
+        </button>
+        <span>{{ getMonthYear() }}</span>
+        <button mat-icon-button (click)="nextMonth()">
+          <mat-icon>arrow_right</mat-icon>
+        </button>
+      </mat-toolbar>
+    </mat-card-header>
+    <mat-card-content>
+
+      <div class="calendar-container">
+        <table>
+          <thead>
+            <tr>
+              <td *ngFor="let day of ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']">{{ day }}</td>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let week of weeks">
+              <td *ngFor="let day of week" [class.today]="isToday(day)" (dragover)="allowDrop($event)"
+                (drop)="onDrop($event, day)">
+                <div class="date-container">
+                  <span class="date">{{ formatDate(day) }}</span>
+                  <button class="add-btn" (click)="addEvent(day)">+</button>
+                  <div *ngIf="events[day.toDateString()]?.length" class="events-list1">
+                    <div *ngFor="let event of events[day.toDateString()]" class="events-list" draggable="true"
+                      (dragstart)="onDragStart($event, day, event)">
+                      <div>{{ event.title }}</div>
+
+                      <button mat-icon-button (click)="removeEvent(day, event)">
+                        <mat-icon>delete</mat-icon>
+                      </button>
+
+                    </div>
+
+                  </div>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+
+  <div *ngIf="isDailyView">
+    <!-- Daily View -->
+    <div *ngFor="let hour of hours">
+      <div class="hour">
+        <div class="hour-label">{{ hour }}</div>
+        <div *ngIf="eventsForDay[hour]?.length" class="events-list1">
+          <div *ngFor="let event of eventsForDay[hour]" class="events-list">
+            <div>{{ event.title }}</div>
+            <button mat-icon-button (click)="removeEvent(event.date, event)">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</app-header>

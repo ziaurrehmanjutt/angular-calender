@@ -1,0 +1,95 @@
+.calendar-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+thead td {
+  font-weight: bold;
+}
+
+td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: center;
+  vertical-align: top;
+  position: relative;
+}
+
+.date-container {
+  position: relative;
+}
+
+.date {
+  display: block;
+  font-weight: bold;
+}
+
+button {
+  display: block;
+  margin: 5px auto;
+}
+
+.events-list {
+  margin-top: 5px;
+  padding: 5px;
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  max-height: 100px;
+  overflow-y: auto;
+}
+
+.today {
+  background-color: #e3f2fd;
+  border-radius: 4px;
+}
+
+.add-btn {
+  position: absolute;
+  top: -8px;
+  right: -3px;
+  border: none;
+  background: #446aff;
+  color: white;
+  border-radius: 5px;
+}
+
+
+.hour {
+  margin-bottom: 10px;
+}
+
+.hour-label {
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.events-list {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4px;
+  border: 1px solid #ccc;
+  margin-bottom: 4px;
+  border-radius: 4px;
+}
+
+.events-list1 {
+  margin-top: 10px;
+}
+
+button.mat-icon-button {
+  margin-left: 10px;
+  color: red;
+}
+
+/* Optional: Highlight the cell when dragging over */
+td.drag-over {
+  background-color: #f0f0f0;
+}
