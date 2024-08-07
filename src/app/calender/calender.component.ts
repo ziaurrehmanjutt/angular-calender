@@ -17,11 +17,11 @@ export class CalenderComponent {
   days: Date[] = [];
   weeks: Date[][] = [];
   events: { [key: string]: any[] } = {};  // Event storage
-  hours: string[] = [];
+  hours: string[] = Array.from({ length: 24 }, (_, i) => `${i}:00`);
   constructor(public dialog: MatDialog) {}
   eventsForDay: { [key: string]: any[] } = {};  // Events organized by hour
-
-
+  minutes: string[] = Array.from({ length: 6 }, (_, i) => (i * 10).toString().padStart(2, '0'))
+  draggedFromTime: { hour: string, minute: string } | null = null;
   ngOnInit() {
     this.updateCalendar();
   }
@@ -50,9 +50,18 @@ export class CalenderComponent {
     this.isDailyView = isDaily;
     this.updateCalendar(); // Update the view based on the toggle
   }
-  
+
 
   updateCalendar() {
+    if (this.isDailyView) {
+      this.setupDailyView();
+    } else {
+      this.setupMonthlyView();
+    }
+  }
+
+
+  setupMonthlyView() {
     const start = new Date(this.currentMonth.getFullYear(), this.currentMonth.getMonth(), 1);
     const end = new Date(this.currentMonth.getFullYear(), this.currentMonth.getMonth() + 1, 0);
 
@@ -140,34 +149,46 @@ export class CalenderComponent {
   }
 
 
-  onDragStart(event: DragEvent, date: Date, eventData: any) {
+
+  getEventHeight(startTime: string, endTime: string): string {
+    // Calculate height based on start and end time
+    const start = parseInt(startTime.split(':')[0], 10);
+    const end = parseInt(endTime.split(':')[0], 10);
+    return `${(end - start) * 50}px`; // Adjust height per hour (50px per hour)
+  }
+
+  onDragStart(event: DragEvent, hour: string, minute: string, eventData: any) {
     event.dataTransfer?.setData('text/plain', JSON.stringify(eventData));
     this.draggedEvent = eventData;
-    this.draggedFromDate = date;
+    this.draggedFromTime = { hour, minute };
   }
 
 
-  onDrop(event: DragEvent, date: Date) {
+onDrop(event: DragEvent, targetHour: string, targetMinute: string) {
     event.preventDefault();
 
-    if (this.draggedEvent && this.draggedFromDate) {
-      const draggedDateString = this.draggedFromDate.toDateString();
-      const targetDateString = date.toDateString();
+    if (this.draggedEvent && this.draggedFromTime) {
+      const sourceKey = this.draggedFromTime.hour + ':' + this.draggedFromTime.minute;
+      const targetKey = targetHour + ':' + targetMinute as any;
 
-      // Remove event from the original date
-      this.events[draggedDateString] = this.events[draggedDateString].filter(e => e !== this.draggedEvent);
-      if (this.events[draggedDateString].length === 0) {
-        delete this.events[draggedDateString];
+      // Remove event from the original time slot
+      const dateString = this.currentMonth.toDateString();
+      this.events[dateString] = this.events[dateString].filter(e => e !== this.draggedEvent);
+      if (this.events[dateString].length === 0) {
+        delete this.events[dateString];
       }
 
-      // Add event to the new date
-      if (!this.events[targetDateString]) {
-        this.events[targetDateString] = [];
+      // Add event to the new time slot
+      if (!this.events[dateString]) {
+        this.events[dateString] = [];
       }
-      this.events[targetDateString].push(this.draggedEvent);
+      if (!this.events[dateString][targetKey]) {
+        this.events[dateString][targetKey] = [];
+      }
+      this.events[dateString][targetKey].push(this.draggedEvent);
 
       this.draggedEvent = null;
-      this.draggedFromDate = null;
+      this.draggedFromTime = null;
     }
   }
 
