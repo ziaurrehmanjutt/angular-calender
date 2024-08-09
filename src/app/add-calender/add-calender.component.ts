@@ -1,47 +1,40 @@
-import { Component, InjectionToken,Inject  } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { Component, Inject } from '@angular/core';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 interface Event {
+  id: string;
   title: string;
   description: string;
   startTime: string;
   endTime: string;
+  date:Date
 }
-
-
-
 
 @Component({
   selector: 'app-add-calender',
   templateUrl: './add-calender.component.html',
-  styleUrl: './add-calender.component.css'
+  styleUrls: ['./add-calender.component.css']
 })
-
-
 export class AddCalenderComponent {
-  event: Event = {
-    title: '',
-    description: '',
-    startTime: '',
-    endTime: ''
-  };
+  event: Event;
 
   constructor(
     public dialogRef: MatDialogRef<AddCalenderComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { date: Date }
+    @Inject(MAT_DIALOG_DATA) public data: { date: Date; event?: Event } // Optional event for editing
   ) {
-    // Set default date in event object
-    this.event.startTime = '';
-    this.event.endTime = '';
+    // Initialize event object
+    this.event = data.event ? { ...data.event } : {
+      id:this.generateUniqueId(),
+      title: '',
+      description: '',
+      startTime: '',
+      endTime: '',
+      date: data.date
+    };
+    this.event.date = data.date;
   }
 
   onSave(): void {
-    // Format start and end time with the date
-    if (this.event.startTime && this.event.endTime) {
-      const date = this.data.date;
-      this.event.startTime = `${this.formatDate(date)}T${this.event.startTime}`;
-      this.event.endTime = `${this.formatDate(date)}T${this.event.endTime}`;
-    }
     this.dialogRef.close(this.event);
   }
 
@@ -49,14 +42,7 @@ export class AddCalenderComponent {
     this.dialogRef.close();
   }
 
-  private formatDate(date: Date): string {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
+  generateUniqueId(): string {
+    return 'id-' + Date.now() + '-' + Math.floor(Math.random() * 1000);
   }
 }
-// function Inject(MAT_DIALOG_DATA: InjectionToken<any>): (target: typeof AddCalenderComponent, propertyKey: undefined, parameterIndex: 1) => void {
-//   throw new Error('Function not implemented.');
-// }
-

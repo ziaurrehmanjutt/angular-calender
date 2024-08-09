@@ -1,11 +1,7 @@
 <app-header>
 
 
-  <mat-slide-toggle (change)="toggleView($event.checked)">
-    {{ isDailyView ? 'Switch to Monthly View' : 'Switch to Daily View' }}
-  </mat-slide-toggle>
-
-  <mat-card *ngIf="!isDailyView">
+  <mat-card>
     <mat-card-header>
       <mat-toolbar>
         <button mat-icon-button (click)="prevMonth()">
@@ -23,66 +19,39 @@
         <table>
           <thead>
             <tr>
-              <td *ngFor="let day of ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']">{{ day }}</td>
+              <th *ngFor="let day of ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']">{{ day }}</th>
             </tr>
           </thead>
           <tbody>
             <tr *ngFor="let week of weeks">
-              <td *ngFor="let day of week" [class.today]="isToday(day)" (dragover)="allowDrop($event)"
-                (drop)="onDrop($event,day.getHours().toString(),day.getMinutes().toString())">
+              <td *ngFor="let day of week" [class.today]="isToday(day)" (dragover)="allowDrop($event)" 
+                (drop)="onDrop($event, day)">
                 <div class="date-container">
                   <span class="date">{{ formatDate(day) }}</span>
                   <button class="add-btn" (click)="addEvent(day)">+</button>
                   <div *ngIf="events[day.toDateString()]?.length" class="events-list1">
-                    <div *ngFor="let event of events[day.toDateString()]" class="events-list" draggable="true"
-                      (dragstart)="onDragStart($event, day.getHours().toString(),day.getMinutes().toString(), event)">
+                    <div *ngFor="let event of events[day.toDateString()]" class="events-list" draggable="true" 
+                      (dragstart)="onDragStart($event, event)">
                       <div>{{ event.title }}</div>
-
+                      <button mat-icon-button (click)="editEvent(day, event)">
+                        <mat-icon>edit</mat-icon>
+                      </button>
                       <button mat-icon-button (click)="removeEvent(day, event)">
                         <mat-icon>delete</mat-icon>
                       </button>
 
                     </div>
-
                   </div>
                 </div>
               </td>
             </tr>
           </tbody>
         </table>
+        
       </div>
     </mat-card-content>
   </mat-card>
 
 
-  <div *ngIf="isDailyView">
-    <!-- Daily View -->
-    <div class="daily-view">
-      <div class="time-column">
-        <div *ngFor="let hour of hours" class="time-row">
-          <div class="time-label">{{ hour }}</div>
-          <div *ngFor="let minute of minutes" class="minute-row"></div>
-        </div>
-      </div>
-      <div class="events-column">
-        <div *ngFor="let hour of hours">
-          <div class="hour-block">
-            <div *ngFor="let minute of minutes" class="minute-block"
-                 (dragover)="allowDrop($event)"
-                 (drop)="onDrop($event, hour, minute)">
-              <div *ngFor="let event of eventsForDay[hour + ':' + minute] || []" 
-                   class="event-block"
-                   [ngStyle]="{'height': getEventHeight(event.startTime, event.endTime)}"
-                   draggable="true"
-                   (dragstart)="onDragStart($event, hour, minute, event)">
-                <div class="event-title">{{ event.title }}</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-  
 
 </app-header>
