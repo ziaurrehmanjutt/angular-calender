@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { AddCalenderComponent } from '../add-calender/add-calender.component';
+import { MyEvent } from '../interfaces/my-event';
 // import { format, addMonths, subMonths, startOfMonth, endOfMonth, eachDayOfInterval, startOfWeek, endOfWeek, isToday } from 'date-fns';
 @Component({
   selector: 'app-calender',
@@ -108,7 +109,7 @@ export class CalenderComponent {
     });
   }
 
-  removeEvent(date: Date, eventToRemove: Event) {
+  removeEvent(date: Date, eventToRemove: MyEvent) {
     const dateString = date.toDateString();
     if (this.events[dateString]) {
       this.events[dateString] = this.events[dateString].filter(event => event.id !== eventToRemove.id);

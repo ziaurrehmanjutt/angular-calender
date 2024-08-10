@@ -1,14 +1,8 @@
 import { Component, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MyEvent } from '../interfaces/my-event';
 
-interface Event {
-  id: string;
-  title: string;
-  description: string;
-  startTime: string;
-  endTime: string;
-  date:Date
-}
+
 
 @Component({
   selector: 'app-add-calender',
@@ -16,11 +10,11 @@ interface Event {
   styleUrls: ['./add-calender.component.css']
 })
 export class AddCalenderComponent {
-  event: Event;
+  event: MyEvent;
 
   constructor(
     public dialogRef: MatDialogRef<AddCalenderComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { date: Date; event?: Event } // Optional event for editing
+    @Inject(MAT_DIALOG_DATA) public data: { date: Date; event?: MyEvent } // Optional event for editing
   ) {
     // Initialize event object
     this.event = data.event ? { ...data.event } : {
