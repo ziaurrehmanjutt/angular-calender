@@ -24,21 +24,35 @@
           </thead>
           <tbody>
             <tr *ngFor="let week of weeks">
-              <td *ngFor="let day of week" [class.today]="isToday(day)" (dragover)="allowDrop($event)" 
+              <td *ngFor="let day of week" [class.today]="isToday(day)" (dragover)="allowDrop($event)"
                 (drop)="onDrop($event, day)">
                 <div class="date-container">
                   <span class="date">{{ formatDate(day) }}</span>
                   <button class="add-btn" (click)="addEvent(day)">+</button>
                   <div *ngIf="events[day.toDateString()]?.length" class="events-list1">
-                    <div *ngFor="let event of events[day.toDateString()]" class="events-list" draggable="true" 
+                    <div *ngFor="let event of events[day.toDateString()]" class="events-list" draggable="true"
                       (dragstart)="onDragStart($event, event)">
-                      <div>{{ event.title }}</div>
-                      <button mat-icon-button (click)="editEvent(day, event)">
-                        <mat-icon>edit</mat-icon>
-                      </button>
-                      <button mat-icon-button (click)="removeEvent(day, event)">
-                        <mat-icon>delete</mat-icon>
-                      </button>
+
+                      <div >
+
+                        <div class="ev-title">
+                          <small>{{ event.title }}</small>
+                          <p>{{event.startTime}} - {{event.endTime}}</p>
+                        </div>
+
+                        <div class="slsl">
+                          <button mat-icon-button (click)="editEvent(day, event)">
+                            <mat-icon>edit</mat-icon>
+                          </button>
+                          <button mat-icon-button (click)="removeEvent(day, event)">
+                            <mat-icon>delete</mat-icon>
+                          </button>
+                        </div>
+
+
+                      </div>
+
+
 
                     </div>
                   </div>
@@ -47,7 +61,7 @@
             </tr>
           </tbody>
         </table>
-        
+
       </div>
     </mat-card-content>
   </mat-card>

@@ -20,15 +20,21 @@ export class CalenderComponent {
   events: { [key: string]: any[] } = {};  // Event storage
   hours: string[] = Array.from({ length: 24 }, (_, i) => `${i}:00`);
   constructor(public dialog: MatDialog) { }
-  eventsForDay: { [key: string]: any[] } = {};  // Events organized by hour
-  minutes: string[] = Array.from({ length: 6 }, (_, i) => (i * 10).toString().padStart(2, '0'))
-  draggedFromTime: { hour: string, minute: string } | null = null;
   ngOnInit() {
     this.updateCalendar();
   }
 
   updateCalendar() {
     this.setupMonthlyView();
+    const today = new Date();
+    this.events[today.toDateString()].push({
+      id: "1111",
+      title: "eeee",
+      description: "",
+      startTime: "333333",
+      endTime: "33333",
+      date: today
+    });
   }
 
 
@@ -132,25 +138,26 @@ export class CalenderComponent {
     event.dataTransfer?.setData('text/plain', JSON.stringify(eventData));
     this.draggedEvent = eventData;
   }
-  
+
   onDrop(event: DragEvent, targetDate: Date) {
     event.preventDefault();
-  
+
     if (this.draggedEvent) {
       const sourceDate = this.draggedEvent.date;
       this.removeEvent(sourceDate, this.draggedEvent);
-  
+
       if (!this.events[targetDate.toDateString()]) {
         this.events[targetDate.toDateString()] = [];
       }
+      this.draggedEvent.date = targetDate;
       this.events[targetDate.toDateString()].push(this.draggedEvent);
-  
+
       this.draggedEvent = null;
     }
 
     console.log("all", this.events)
   }
-  
+
 
   allowDrop(event: DragEvent) {
     event.preventDefault();  // Required to allow dropping
@@ -170,9 +177,9 @@ export class CalenderComponent {
   editEvent(date: Date, eventToEdit: any) {
     const dialogRef = this.dialog.open(AddCalenderComponent, {
       width: '500px',
-      data: { event: eventToEdit , date: date }  // Pass the event to edit
+      data: { event: eventToEdit, date: date }  // Pass the event to edit
     });
-  
+
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         const dateString = date.toDateString();
